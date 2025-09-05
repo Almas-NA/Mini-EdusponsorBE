@@ -28,6 +28,11 @@ public class AdminController {
         return adminService.updateAdminDetail(adminDetail);
     }
 
+    @GetMapping("/dashboard/data")
+    public ResponseEntity<?> dashboardInfo() {
+        return adminService.dashboardData();
+    }
+
     @GetMapping("/institutions")
     public ResponseEntity<?> getInstitutions() {
         return adminService.getInstitutions();
@@ -44,7 +49,7 @@ public class AdminController {
     }
 
     @GetMapping("/pending/sponsors")
-    public List<Sponsor> getPendingSponsors() {
+    public ResponseEntity<?> getPendingSponsors() {
         return adminService.getPendingSponsors();
     }
 
@@ -53,12 +58,9 @@ public class AdminController {
         return adminService.approveInstitution(institute);
     }
 
-    @PostMapping("/approve/sponsor/{id}")
-    public ResponseEntity<?> approveSponsor(
-            @PathVariable String id,
-            @RequestParam String username,
-            @RequestParam String password) {
-        return adminService.approveSponsor(id, username, password);
+    @PostMapping("/approve/sponsor")
+    public ResponseEntity<?> approveSponsor(@RequestBody Map<String, Object> sponsor) {
+        return adminService.approveSponsor(sponsor);
     }
 
     @PostMapping("/reject/institution")
@@ -66,8 +68,8 @@ public class AdminController {
         return adminService.rejectInstitution(institute);
     }
 
-    @DeleteMapping("/reject/sponsor/{id}")
-    public ResponseEntity<?> rejectSponsor(@PathVariable String id) {
-        return adminService.rejectSponsor(id);
+    @PostMapping("/reject/sponsor")
+    public ResponseEntity<?> rejectSponsor(@RequestBody Map<String, Object> sponsor) {
+        return adminService.rejectSponsor(sponsor);
     }
 }

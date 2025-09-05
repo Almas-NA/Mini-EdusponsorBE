@@ -26,15 +26,39 @@ public class AdminService {
     private final AdminRepository adminRepository;
 
 
+    // Get Dashboard Info
+    public ResponseEntity<?> dashboardData() {
+        try {
+            List<Map<String, Object>> dashboardData = List.of(
+                    Map.of(
+                            "displayName", "Institutions",
+                            "approved", institutionRepo.findByApprovedTrue().size(),
+                            "pending", institutionRepo.findByApprovedFalse().size(),
+                            "total", institutionRepo.count()
+                    ),
+                    Map.of(
+                            "displayName", "Sponsors",
+                            "approved", sponsorRepo.findByApprovedTrue().size(),
+                            "pending", sponsorRepo.findByApprovedFalse().size(),
+                            "total", sponsorRepo.count()
+                    )
+            );
+
+            return ResponseEntity.ok(ApiResponse.listSuccess(dashboardData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "Some error occurred. Try later!"));
+        }
+    }
 
     // Get all institutions
     public ResponseEntity<?> getInstitutions() {
-        List<Institution> institutions = institutionRepo.findAll();
+        List<Institution> institutions = institutionRepo.findByApprovedTrue();
         return ResponseEntity.ok(ApiResponse.listSuccess(institutions));
     }
 
     public ResponseEntity<?> getSponsors() {
-        List<Sponsor> sponsor = sponsorRepo.findAll();
+        List<Sponsor> sponsor = sponsorRepo.findByApprovedTrue();
         return ResponseEntity.ok(ApiResponse.listSuccess(sponsor));
     }
 
@@ -44,9 +68,11 @@ public class AdminService {
     }
 
 
-    public List<Sponsor> getPendingSponsors() {
-        return sponsorRepo.findByApprovedFalse();
+    public ResponseEntity<?> getPendingSponsors() {
+        List<Sponsor> sponsors = sponsorRepo.findByApprovedFalse();
+        return ResponseEntity.ok(ApiResponse.listSuccess(sponsors));
     }
+
 
 
 
@@ -135,22 +161,27 @@ public class AdminService {
         return ResponseEntity.ok(ApiResponse.mapSuccess(user,"Institution approved and user created!"));
     }
 
-    public ResponseEntity<?> approveSponsor(String sponsorId, String username, String password) {
-        Sponsor sponsor = sponsorRepo.findById(sponsorId)
+    public ResponseEntity<?> approveSponsor(Map<String, Object> sponsor) {
+
+        String id = (String) sponsor.get("id");
+        String username = (String) sponsor.get("username");
+        String password = (String) sponsor.get("password");
+
+        Sponsor sponsor1 = sponsorRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sponsor not found"));
 
-        sponsor.setApproved(true);
-        sponsorRepo.save(sponsor);
+        sponsor1.setApproved(true);
+        sponsorRepo.save(sponsor1);
 
         User user = User.builder()
-                .id(sponsorId)
+                .id(id)
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .role(UserRole.SPONSOR)
                 .build();
 
         userRepo.save(user);
-        return ResponseEntity.ok("Sponsor approved and user created");
+        return ResponseEntity.ok(ApiResponse.mapSuccess(user,"Sponsor approved and user created!"));
     }
 
     public ResponseEntity<?> rejectInstitution(Map<String, Object> institute) {
@@ -168,8 +199,19 @@ public class AdminService {
         return ResponseEntity.ok(ApiResponse.mapSuccess(institution,"Institution rejected and removed!"));
     }
 
-    public ResponseEntity<?> rejectSponsor(String sponsorId) {
-        sponsorRepo.deleteById(sponsorId);
-        return ResponseEntity.ok("Sponsor rejected and removed");
+    public ResponseEntity<?> rejectSponsor(Map<String, Object> sponsor) {
+
+        String id = (String) sponsor.get("id");
+
+
+        Sponsor sponsor1 = sponsorRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sponsor not found"));
+
+        if(sponsor1==null){
+            return ResponseEntity.ok(ApiResponse.error(404,"Sponsor not found!"));
+        }
+
+        sponsorRepo.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.mapSuccess(sponsor1,"Institution rejected and removed!"));
     }
 }

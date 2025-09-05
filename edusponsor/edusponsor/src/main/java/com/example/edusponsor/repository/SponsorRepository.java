@@ -15,4 +15,6 @@ public interface SponsorRepository extends MongoRepository<Sponsor, String> {
     Optional<Sponsor> findById(String id);
 
     List<Sponsor> findByApprovedFalse();
+
+    List<Sponsor> findByApprovedTrue();
 }

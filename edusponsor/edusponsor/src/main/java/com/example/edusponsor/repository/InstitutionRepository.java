@@ -14,4 +14,6 @@ public interface InstitutionRepository extends MongoRepository<Institution, Stri
     Optional<Institution> findById(String id);
 
     List<Institution> findByApprovedFalse();
+
+    List<Institution> findByApprovedTrue();
 }
