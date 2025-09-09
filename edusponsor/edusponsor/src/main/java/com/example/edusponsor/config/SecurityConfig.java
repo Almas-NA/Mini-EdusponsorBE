@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/institution/check/sponsorship/exists").hasAnyRole("STUDENT", "INSTITUTION")
                         .requestMatchers("/institution/**").hasRole("INSTITUTION")
                         .requestMatchers("/sponsor/**").hasRole("SPONSOR")
                         .requestMatchers("/user/**").authenticated()
