@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/institution/check/sponsorship/exists").hasAnyRole("STUDENT", "INSTITUTION")
                         .requestMatchers("/institution/**").hasRole("INSTITUTION")
                         .requestMatchers("/sponsor/**").hasRole("SPONSOR")
+                        .requestMatchers("/student/**").hasRole("STUDENT")
                         .requestMatchers("/user/**").authenticated()
                 )
                 .exceptionHandling(ex -> ex

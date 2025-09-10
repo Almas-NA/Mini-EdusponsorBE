@@ -17,6 +17,7 @@ public class Sponsor {
     private String password;
     private String fullName;
     private String email;
+    private String contactNumber;
     private String incomeProofBaseSF;
     private String location;
     private boolean approved;

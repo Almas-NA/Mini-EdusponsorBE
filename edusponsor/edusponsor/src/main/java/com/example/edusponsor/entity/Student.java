@@ -27,4 +27,5 @@ public class Student {
     private String parentContact;
     private String relation;
     private String annualIncome;
+    private String incomeProofBaseSF;
 }

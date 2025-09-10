@@ -109,6 +109,7 @@ public class InstitutionService {
                     .parentContact((String) studentDetail.get("parentContact"))
                     .relation((String) studentDetail.get("relation"))
                     .annualIncome((String) studentDetail.get("annualIncome"))
+                    .incomeProofBaseSF((String) studentDetail.get("incomeProof"))
                     .build();
 
             // 3. Save student
