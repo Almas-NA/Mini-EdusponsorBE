@@ -2,11 +2,10 @@ package com.example.edusponsor.service;
 
 import com.example.edusponsor.dto.common.ApiResponse;
 import com.example.edusponsor.entity.Sponsorship;
-import com.example.edusponsor.entity.Student;
-import com.example.edusponsor.entity.User;
-import com.example.edusponsor.enums.UserRole;
 import com.example.edusponsor.repository.SponsorshipRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +69,63 @@ public class SponsorshipService {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApiResponse.error(500, "Error checking sponsorship", e.getMessage()));
+        }
+    }
+
+    public ResponseEntity<?> updateSponsorshipDetail(Map<String, Object> sponsorshipData) {
+        try {
+            String id = (String) sponsorshipData.get("id");
+
+            Sponsorship sponsorship = sponsorshipRepo.findById(id).orElse(null);
+            if (sponsorship == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error(404, "Sponsorship not found!"));
+            }
+
+            // Remove "id" from the map to only process fields to update
+            sponsorshipData.remove("id");
+
+            if (sponsorshipData.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.error(400, "No fields provided to update!"));
+            }
+
+            for (Map.Entry<String, Object> entry : sponsorshipData.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                switch (key) {
+                    case "yearOneFeeStatus":
+                        sponsorship.setYearOneFeeStatus((String) value);
+                        break;
+                    case "yearTwoFeeStatus":
+                        sponsorship.setYearTwoFeeStatus((String) value);
+                        break;
+                    case "yearThreeFeeStatus":
+                        sponsorship.setYearThreeFeeStatus((String) value);
+                        break;
+                    case "yearFourFeeStatus":
+                        sponsorship.setYearFourFeeStatus((String) value);
+                        break;
+                    case "sponsorId":
+                        sponsorship.setSponsorId((String) value);
+                        break;
+                    default:
+                        return ResponseEntity.badRequest()
+                                .body(ApiResponse.error(400, "Invalid field: " + key));
+                }
+            }
+
+            Sponsorship updated = sponsorshipRepo.save(sponsorship);
+
+            return ResponseEntity.ok(ApiResponse.mapSuccess(updated, "Sponsorship updated successfully!"));
+
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ApiResponse.error(409, "Data integrity violation"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "Some error occurred. Try later!"));
         }
     }
 

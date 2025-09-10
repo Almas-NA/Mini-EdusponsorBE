@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // use your existing CorsConfig
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/auth/**", "/public/**", "/sponsorship/**").permitAll()
+                        .requestMatchers("/admin/institutions").hasAnyRole("ADMIN", "SPONSOR")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/institution/check/sponsorship/exists").hasAnyRole("STUDENT", "INSTITUTION")
                         .requestMatchers("/institution/**").hasRole("INSTITUTION")

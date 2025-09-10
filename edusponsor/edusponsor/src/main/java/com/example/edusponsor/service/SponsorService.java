@@ -3,13 +3,16 @@ package com.example.edusponsor.service;
 import com.example.edusponsor.dto.common.ApiResponse;
 import com.example.edusponsor.entity.Institution;
 import com.example.edusponsor.entity.Sponsor;
+import com.example.edusponsor.entity.Sponsorship;
 import com.example.edusponsor.repository.SponsorRepository;
+import com.example.edusponsor.repository.SponsorshipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +22,7 @@ public class SponsorService {
 
 
     private final SponsorRepository sponsorRepository;
+    private final SponsorshipRepository sponsorshipRepository;
 
 
     public ResponseEntity<?> getSponsorDetail(Map<String, Object> userID) {
@@ -72,6 +76,29 @@ public class SponsorService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(500, "Some error occurred. Try later!"));
+        }
+    }
+
+    public ResponseEntity<?> getInstSponsorships(Map<String, Object> request) {
+        try {
+            String institutionId = (String) request.get("institutionId");
+
+            // fetch sponsorships by institutionId
+            List<Sponsorship> existingSponsorships = sponsorshipRepository.findByInstitutionId(institutionId);
+
+            if (!existingSponsorships.isEmpty()) {
+                return ResponseEntity.ok(
+                        ApiResponse.listSuccess(existingSponsorships, "Sponsorships found for this institution")
+                );
+            } else {
+                return ResponseEntity.ok(
+                        ApiResponse.error(404, "No sponsorships exist for this institution")
+                );
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error(500, "Error checking sponsorships", e.getMessage()));
         }
     }
 }
