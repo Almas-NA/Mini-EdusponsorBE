@@ -31,6 +31,16 @@ public class ApiResponse<T> {
         private List<String> message;
     }
 
+    public static <T> ApiResponse<T> success(String... messages) {
+        return ApiResponse.<T>builder()
+                .statusCode(200)
+                .type("SUCCESS")
+                .responseData(ResponseData.<T>builder()
+                        .message(messages == null ? Collections.emptyList() : List.of(messages))
+                        .build())
+                .build();
+    }
+
     public static <T> ApiResponse<T> mapSuccess(T data, String... messages) {
         return ApiResponse.<T>builder()
                 .statusCode(200)

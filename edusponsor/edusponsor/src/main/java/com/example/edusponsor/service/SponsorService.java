@@ -101,4 +101,27 @@ public class SponsorService {
                     .body(ApiResponse.error(500, "Error checking sponsorships", e.getMessage()));
         }
     }
+
+    public ResponseEntity<?> getSponsorSponsorships(Map<String, Object> request) {
+        try {
+            String sponsorId = (String) request.get("sponsorId");
+
+            // fetch sponsorships by institutionId
+            List<Sponsorship> existingSponsorships = sponsorshipRepository.findBySponsorId(sponsorId);
+
+            if (!existingSponsorships.isEmpty()) {
+                return ResponseEntity.ok(
+                        ApiResponse.listSuccess(existingSponsorships, "Sponsorships found for this institution")
+                );
+            } else {
+                return ResponseEntity.ok(
+                        ApiResponse.error(404, "No sponsorships exist for this institution")
+                );
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error(500, "Error checking sponsorships", e.getMessage()));
+        }
+    }
 }

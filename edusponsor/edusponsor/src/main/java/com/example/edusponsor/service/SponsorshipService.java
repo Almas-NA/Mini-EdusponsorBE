@@ -35,6 +35,10 @@ public class SponsorshipService {
                     .yearTwoFee((String) sponsorship.get("yearTwoFee"))
                     .yearThreeFee((String) sponsorship.get("yearThreeFee"))
                     .yearFourFee((String) sponsorship.get("yearFourFee"))
+                    .yearOneFeeStatus((String) sponsorship.get("yearOneFeeStatus"))
+                    .yearTwoFeeStatus((String) sponsorship.get("yearTwoFeeStatus"))
+                    .yearThreeFeeStatus((String) sponsorship.get("yearThreeFeeStatus"))
+                    .yearFourFeeStatus((String) sponsorship.get("yearFourFeeStatus"))
                     .priority((String) sponsorship.get("priority"))
                     .sponsorId((String) sponsorship.get("sponsorId"))
                     .build();

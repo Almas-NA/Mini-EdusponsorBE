@@ -35,4 +35,10 @@ public class SponsorController {
             @RequestBody Map<String, Object> instId) {
         return sponsorService.getInstSponsorships(instId);
     }
+
+    @PostMapping("/get/sponsor/sponsorships")
+    public ResponseEntity<?> getSponsorSponsorships(
+            @RequestBody Map<String, Object> sponsorId) {
+        return sponsorService.getSponsorSponsorships(sponsorId);
+    }
 }

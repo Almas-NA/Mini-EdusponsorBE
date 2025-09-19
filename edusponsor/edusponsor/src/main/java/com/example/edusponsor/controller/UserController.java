@@ -1,5 +1,6 @@
 package com.example.edusponsor.controller;
 
+import com.example.edusponsor.dto.common.ApiResponse;
 import com.example.edusponsor.entity.User;
 import com.example.edusponsor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,6 @@ public class UserController {
     // Logout is handled on the frontend by removing the JWT token.
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok("Logout successful. Just delete the token on the client.");
+        return ResponseEntity.ok(ApiResponse.success("User logout successful"));
     }
 }
